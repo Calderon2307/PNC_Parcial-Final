@@ -10,66 +10,153 @@ Este repositorio contiene un proyecto para evaluar y practicar los conceptos de 
 
 ---
 
-## Sistema de Soporte Técnico
+# Documentación Técnica — Proyecto Parcial Final N-Capas con Seguridad y Docker
 
-### Descripción
+## Fecha: 09/07/2025
 
-Simula un sistema donde los usuarios pueden crear solicitudes de soporte (tickets) y los técnicos pueden gestionarlas. Actualmente **no tiene seguridad implementada**.
+## Autor: Federico Calderón
 
-Su tarea es **agregar autenticación y autorización** utilizando **Spring Security + JWT**, y contenerizar la aplicación con Docker.
+---
 
-### Requisitos generales
+## 🎯 Objetivo del Proyecto
 
-- Proyecto funcional al ser clonado y ejecutado con Docker.
-- Uso de PostgreSQL (ya incluido en docker-compose).
-- Seguridad implementada con JWT.
-- Roles `USER` y `TECH`.
-- Acceso restringido según el rol del usuario.
-- Evidencia de funcionamiento (colección de Postman/Insomnia/Bruno o capturas de pantalla).
+Simular un sistema de soporte técnico con control de autenticación y autorización mediante JWT, protección de rutas según roles (`USER`, `TECH`), y despliegue usando contenedores Docker junto con PostgreSQL.
 
-**Nota: El proyecto ya tiene una estructura básica de Spring Boot con endpoints funcionales para manejar tickets. No es necesario modificar la lógica de negocio, solo agregar seguridad. Ademas se inclye un postman collection para probar los endpoints. **
+---
 
-_Si van a crear mas endpoints como el login o registrarse recuerden actualizar postman/insomnia/bruno collection_
+## 📦 Estructura Base del Proyecto
 
-### Partes de desarrollo
+```
+com.uca.parcialfinalncapas
+├── controller
+├── dto
+│   ├── request
+│   └── response
+├── entities
+├── exceptions
+├── repository
+├── security          <-- Agregado
+├── service
+│   └── impl
+├── utils
+│   ├── enums
+│   └── mappers
+└── config            <-- Agregado
+```
 
-#### Parte 1: Implementar login con JWT
+---
 
-- [ ] Crear endpoint `/auth/login`.
-- [ ] Validar usuario y contraseña (puede estar en memoria o en BD).
-- [ ] Retornar JWT firmado.
+## 🔐 Seguridad con Spring Security y JWT
 
-#### Parte 2: Configurar filtros y validación del token
+### 1. `SecurityConfig`
 
-- [ ] Crear filtro para validar el token en cada solicitud.
-- [ ] Extraer usuario desde el JWT.
-- [ ] Añadir a contexto de seguridad de Spring.
+- Configura el filtro de seguridad, desactiva CSRF, y establece rutas públicas (`/auth/login`, `/usuarios`) y protegidas (todas las demás).
+- Inyecta el filtro JWT.
 
-#### Parte 3: Proteger endpoints con Spring Security
+### 2. `JwtUtil`
 
-- [ ] Permitir solo el acceso al login sin token.
-- [ ] Proteger todos los demás endpoints.
-- [ ] Manejar errores de autorización adecuadamente.
+- Generación y validación de tokens JWT.
+- Firma HMAC SHA256.
+- Uso de propiedades configurables desde `application.yml`.
 
-#### Parte 4: Aplicar roles a los endpoints
+### 3. `JwtAuthenticationFilter`
 
-| Rol  | Acceso permitido                         |
-| ---- | ---------------------------------------- |
-| USER | Crear tickets, ver solo sus tickets      |
-| TECH | Ver todos los tickets, actualizar estado |
+- Filtro que intercepta todas las peticiones.
+- Extrae y valida el token JWT.
+- Inyecta el usuario autenticado en el contexto de Spring.
 
-- [ ] Usar `@PreAuthorize` o reglas en el `SecurityFilterChain`.
-- [ ] Validar que un USER solo vea sus tickets.
-- [ ] Validar que solo un TECH pueda modificar tickets.
+### 4. `CustomUserDetailsService`
 
-#### Parte 5: Agregar Docker
+- Implementación de `UserDetailsService`.
+- Carga usuarios desde la base de datos por correo.
 
-- [ ] `Dockerfile` funcional para la aplicación.
-- [ ] `docker-compose.yml` que levante la app y la base de datos.
-- [ ] Documentar cómo levantar el entorno (`docker compose up`).
+### 5. `UserDetailsImpl`
 
-#### Parte 6: Evidencia de pruebas
+- Adaptación de la entidad `User` al contrato `UserDetails`.
+- Retorna roles como `ROLE_USER`, `ROLE_TECH`.
 
-- [ ] Probar todos los flujos con Postman/Insomnia/Bruno.
-- [ ] Mostrar que los roles se comportan correctamente.
-- [ ] Incluir usuarios de prueba (`user`, `tech`) y contraseñas.
+### 6. `AuthController`
+
+- Endpoint `POST /auth/login`
+- Devuelve el JWT al autenticarse exitosamente.
+
+### 7. `UserController`
+
+- Endpoint `POST /usuarios` ahora genera y retorna un JWT al registrarse.
+
+---
+
+## ✅ Validación de Roles
+
+- `USER`: puede crear tickets, ver sus propios tickets (`/mis-tickets`), ver un ticket **solo si le pertenece**.
+- `TECH`: puede ver todos los tickets, actualizarlos y eliminarlos.
+
+---
+
+## 🐳 Dockerización
+
+### Dockerfile
+
+```dockerfile
+FROM eclipse-temurin:17-jdk-alpine
+WORKDIR /app
+COPY target/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+### docker-compose.yml
+
+```yaml
+version: "3.8"
+services:
+  postgres:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: PNC-Final
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/PNC-Final
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    depends_on:
+      - postgres
+
+volumes:
+  postgres-data:
+```
+
+---
+
+## 🧪 Pruebas
+
+- Insomnia/Postman incluye:
+  - Login
+  - Registro
+  - Validación de autorización (403 si accede a lo no permitido)
+
+---
+
+## 📂 Archivos modificados o agregados
+
+- `SecurityConfig.java`
+- `JwtUtil.java`
+- `JwtAuthenticationFilter.java`
+- `CustomUserDetailsService.java`
+- `UserDetailsImpl.java`
+- `AuthController.java`
+- `LoginRequest.java`, `JwtResponse.java`
+- `docker-compose.yml`, `Dockerfile`
+- Ajustes en `UserServiceImpl`, `UserController`, `application.yml`
+
+---
