@@ -3,6 +3,7 @@ package com.uca.parcialfinalncapas.controller;
 import com.uca.parcialfinalncapas.dto.request.UserCreateRequest;
 import com.uca.parcialfinalncapas.dto.request.UserUpdateRequest;
 import com.uca.parcialfinalncapas.dto.response.GeneralResponse;
+import com.uca.parcialfinalncapas.dto.response.JwtResponse;
 import com.uca.parcialfinalncapas.dto.response.UserResponse;
 import com.uca.parcialfinalncapas.entities.User;
 import com.uca.parcialfinalncapas.service.UserService;
@@ -39,9 +40,9 @@ public class UserController {
         return ResponseBuilderUtil.buildResponse("Usuario encontrado", HttpStatus.OK, user);
     }
 
-    @PostMapping
+    @PostMapping("/registro")
     public ResponseEntity<GeneralResponse> createUser(@Valid @RequestBody UserCreateRequest user) {
-        UserResponse createdUser = userService.save(user);
+        JwtResponse createdUser = userService.save(user);
         return ResponseBuilderUtil.buildResponse("Usuario creado correctamente", HttpStatus.CREATED, createdUser);
     }
 

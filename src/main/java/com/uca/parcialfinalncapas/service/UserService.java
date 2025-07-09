@@ -2,6 +2,7 @@ package com.uca.parcialfinalncapas.service;
 
 import com.uca.parcialfinalncapas.dto.request.UserCreateRequest;
 import com.uca.parcialfinalncapas.dto.request.UserUpdateRequest;
+import com.uca.parcialfinalncapas.dto.response.JwtResponse;
 import com.uca.parcialfinalncapas.dto.response.UserResponse;
 import com.uca.parcialfinalncapas.entities.User;
 
@@ -22,7 +23,7 @@ public interface UserService {
      * @param user el objeto User a guardar
      * @return el usuario guardado
      */
-    UserResponse save(UserCreateRequest user);
+    JwtResponse save(UserCreateRequest user);
 
     /**
      * Actualiza un usuario existente.

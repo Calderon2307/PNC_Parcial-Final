@@ -3,14 +3,17 @@
 Este repositorio contiene un proyecto para evaluar y practicar los conceptos de seguridad en aplicaciones Spring Boot usando JWT, roles y Docker.
 
 ### Estudiantes
-- **Nombre del estudiante 1**: [Tu nombre aquí] - [Carnet aquí]
-- **Nombre del estudiante 2**: [Tu nombre aquí] - [Carnet aquí]
-- Sección: [Tu sección aquí]
+
+- **Nombre del estudiante 1**: Federico Josué Calderón Durán - 00215818
+- **Nombre del estudiante 2**: Alexander Rafael Rogel Campos - 00100922
+- **Sección**: S02
+
 ---
 
 ## Sistema de Soporte Técnico
 
 ### Descripción
+
 Simula un sistema donde los usuarios pueden crear solicitudes de soporte (tickets) y los técnicos pueden gestionarlas. Actualmente **no tiene seguridad implementada**.
 
 Su tarea es **agregar autenticación y autorización** utilizando **Spring Security + JWT**, y contenerizar la aplicación con Docker.
@@ -31,37 +34,42 @@ _Si van a crear mas endpoints como el login o registrarse recuerden actualizar p
 ### Partes de desarrollo
 
 #### Parte 1: Implementar login con JWT
+
 - [ ] Crear endpoint `/auth/login`.
 - [ ] Validar usuario y contraseña (puede estar en memoria o en BD).
 - [ ] Retornar JWT firmado.
 
 #### Parte 2: Configurar filtros y validación del token
+
 - [ ] Crear filtro para validar el token en cada solicitud.
 - [ ] Extraer usuario desde el JWT.
 - [ ] Añadir a contexto de seguridad de Spring.
 
 #### Parte 3: Proteger endpoints con Spring Security
+
 - [ ] Permitir solo el acceso al login sin token.
 - [ ] Proteger todos los demás endpoints.
 - [ ] Manejar errores de autorización adecuadamente.
 
 #### Parte 4: Aplicar roles a los endpoints
 
-| Rol   | Acceso permitido                                 |
-|--------|--------------------------------------------------|
-| USER  | Crear tickets, ver solo sus tickets              |
-| TECH  | Ver todos los tickets, actualizar estado         |
+| Rol  | Acceso permitido                         |
+| ---- | ---------------------------------------- |
+| USER | Crear tickets, ver solo sus tickets      |
+| TECH | Ver todos los tickets, actualizar estado |
 
 - [ ] Usar `@PreAuthorize` o reglas en el `SecurityFilterChain`.
 - [ ] Validar que un USER solo vea sus tickets.
 - [ ] Validar que solo un TECH pueda modificar tickets.
 
 #### Parte 5: Agregar Docker
+
 - [ ] `Dockerfile` funcional para la aplicación.
 - [ ] `docker-compose.yml` que levante la app y la base de datos.
 - [ ] Documentar cómo levantar el entorno (`docker compose up`).
 
 #### Parte 6: Evidencia de pruebas
+
 - [ ] Probar todos los flujos con Postman/Insomnia/Bruno.
 - [ ] Mostrar que los roles se comportan correctamente.
 - [ ] Incluir usuarios de prueba (`user`, `tech`) y contraseñas.

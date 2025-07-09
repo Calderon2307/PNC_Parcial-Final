@@ -1,9 +1,13 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/supportdb
+    url: jdbc:postgresql://localhost:5432/PNC-Final
     username: postgres
-    password: root
+    password: admin
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+jwt:
+  secret: gMQz4bFrnb70Scr5TuLivYx4lnaCf7uSCPcqodxZU8s=
+  expiration-ms: 86400000

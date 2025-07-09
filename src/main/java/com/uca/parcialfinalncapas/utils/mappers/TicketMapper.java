@@ -53,6 +53,14 @@ public class TicketMapper {
                 .build();
     }
 
+    public static Ticket toEntity (TicketResponse res) {
+        return Ticket.builder()
+                .titulo(res.getTitulo())
+                .descripcion(res.getDescripcion())
+                .fecha(LocalDateTime.now())
+                .build();
+    }
+
     public static List<TicketResponseList> toDTOList(List<Ticket> tickets) {
         return tickets.stream()
                 .map(ticket -> TicketResponseList.builder()
