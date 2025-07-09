@@ -14,7 +14,7 @@ Este repositorio contiene un proyecto para evaluar y practicar los conceptos de 
 
 ## Fecha: 09/07/2025
 
-## Autor: Federico Calderón
+## Autor: Federico Calderón - Alexander Campos
 
 ---
 
